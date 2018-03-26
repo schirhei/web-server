@@ -3,14 +3,16 @@ const request = require('request');
 const hbs = require('hbs');
 const fs = require('fs');
 
+const port = process.env.PORT || 8080;
+
 var weather = ''; //variable to hold the weather info
 var app = express();
 
 hbs.registerPartials(__dirname + '/views/partials');
 
-app.use((request, response, next) => {
-    response.render('main.hbs')
-});
+//app.use((request, response, next) => {
+//    response.render('main.hbs')
+//});
 
 app.use((request, response, next) => {
     var time = new Date().toString();
@@ -18,7 +20,7 @@ app.use((request, response, next) => {
     var log = `${time}: ${request.method} ${request.url}`;
     fs.appendFile('server.log', log + '\n', (error) => {
         if (error) {
-            console.log('Unable to log message');
+            console.log('Unable to log a message');
         }
     });
     next();
@@ -42,7 +44,7 @@ app.get('/home', (request, response) => {
         1: 'about',
         2: 'weather',
         year: new Date().getFullYear(),
-        welcome: 'hi',
+        welcome: 'hello',
         img: 'https://cdn3.volusion.com/setuf.jdraj/v/vspfiles/photos/5004-2.jpg?1445188867'
     });
 });
@@ -69,8 +71,8 @@ app.get('/about', (request, response) => {
     });
 });
 
-app.listen(8080, () => {
-    console.log('Server is up on the port 8080');
+app.listen(port, () => {
+    console.log(`Server is up on the port ${port}`);
 
     function getWeather(callback) {
         request({
@@ -95,7 +97,7 @@ app.listen(8080, () => {
         if (errorMessage) {
             console.log(errorMessage);
         } else {
-            weather = JSON.stringify(results, undefined, 2);
+            weather = results;
         }
     });
 });
